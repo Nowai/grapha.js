@@ -68,8 +68,8 @@ If an edge from `u` to `v` exist, it will be removed from the graph. If the grap
 
 A static function returning the graph specified by the `json` object. 
 
-```json
-{
+```javascript
+const json = {
     "nodes": [
         {"id": "1"},
         {"id": "2"},
@@ -79,7 +79,8 @@ A static function returning the graph specified by the `json` object.
         {"source": "1", "target": "2"}
         {"source": "3", "target": "1"}
     ]
-}
+};
+let graph = Graph.serialize(json);
 ```
 <a name="deserialization" href="#deserialization">#</a> *graph*.**deserialize**()
 
