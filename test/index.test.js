@@ -1,5 +1,5 @@
 import chai from 'chai';
-import {Graph} from '../lib/graphy.js';
+import {Graph} from '../lib/grapha.js';
 
 chai.expect();
 
