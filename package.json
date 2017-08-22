@@ -1,8 +1,8 @@
 {
-  "name": "graphy.js",
-  "version": "0.0.3",
-  "description": "graphy.js - A javascript es6 graph library",
-  "main": "lib/graphy.min.js",
+  "name": "grapha",
+  "version": "0.1.0",
+  "description": "grapha.js - A javascript es6 graph library",
+  "main": "lib/grapha.min.js",
   "scripts": {
     "build": "WEBPACK_ENV=build webpack",
     "dev": "WEBPACK_ENV=dev webpack -w",
@@ -24,9 +24,9 @@
     "webpack": "^3.5.5"
   },
   "bugs": {
-    "url": "https://github.com/Nowai/graphy-js/issues"
+    "url": "https://github.com/Nowai/grapha.js/issues"
   },
-  "homepage": "https://github.com/Nowai/graphy-js",
+  "homepage": "https://github.com/Nowai/grapha.js",
   "keywords": [
     "graph",
     "es6",
@@ -37,6 +37,6 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Nowai/graphy-js.git"
+    "url": "git+https://github.com/Nowai/grapha.js.git"
   }
 }

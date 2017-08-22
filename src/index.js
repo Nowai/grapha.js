@@ -1,2 +1,2 @@
-import Graph from './graphy.js';
+import Graph from './grapha.js';
 export { Graph };

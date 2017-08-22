@@ -1,21 +1,21 @@
-# graphy.js 
+# Grapha.js 
 ### A tiny ES6 Graph library
 
 ## Installing
 
 You can install this library by either importing the library locally or using `npm`.
 
-To install it locally include the minified ES5 file `lib/graphy.min.js` or the ES6 file `lib/graphy.js`.
+To install it locally include the minified ES5 file `lib/grapha.min.js` or the ES6 file `lib/grapha.js`.
 
 To install it using npm, run the following command:
 
-`npm install graphy-js`
+`npm install grapha`
 
 To use it in your code:
 
 ```javascript
-var Graph = require('graphy-js'); // ES5
-import {Graph} from 'graphy-js'; // ES6 
+var Graph = require('grapha'); // ES5
+import {Graph} from 'grapha'; // ES6 
 ```
 
 ## Examples

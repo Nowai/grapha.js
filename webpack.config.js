@@ -5,7 +5,7 @@ var path = require('path');
 const env = process.env.WEBPACK_ENV;
 
 // library meta-data
-var libName = 'graphy';
+var libName = 'grapha';
 var outputFileName = env === 'build' ? libName + '.min.js' : libName + '.js';
 
 
