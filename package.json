@@ -1,0 +1,42 @@
+{
+  "name": "graphy.js",
+  "version": "0.0.3",
+  "description": "graphy.js - A javascript es6 graph library",
+  "main": "lib/graphy.min.js",
+  "scripts": {
+    "build": "WEBPACK_ENV=build webpack",
+    "dev": "WEBPACK_ENV=dev webpack -w",
+    "test": "mocha --compilers js:babel-core/register --colors ./test/*.test.js"
+  },
+  "author": "Florian Marienwald",
+  "license": "MIT",
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "chai": "^4.1.1",
+    "eslint": "^4.5.0",
+    "eslint-loader": "^1.9.0",
+    "mocha": "^3.5.0",
+    "webpack": "^3.5.5"
+  },
+  "bugs": {
+    "url": "https://github.com/Nowai/graphy-js/issues"
+  },
+  "homepage": "https://github.com/Nowai/graphy-js",
+  "keywords": [
+    "graph",
+    "es6",
+    "data",
+    "structure",
+    "search",
+    "algorithm"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nowai/graphy-js.git"
+  }
+}
