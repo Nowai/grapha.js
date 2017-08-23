@@ -7,6 +7,9 @@
   },
   "parserOptions": {
     "sourceType": "module"
+  },
+  "rules": {
+    "no-console": 1
   }
 }
 

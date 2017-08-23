@@ -5,7 +5,11 @@ export default class Graph {
       isWeighted: false,
       isDirected: true 
     };
-    Object.keys(defaultConf).forEach(k => { this._config[k] = this._config[k] || defaultConf[k] });
+
+    Object.keys(defaultConf).forEach(k => { 
+      this._config[k] = k in this._config ? this._config[k] : defaultConf[k] 
+    });
+
     this._nodes = {};
     this._nodeSize = 0;
     this._edgeSize = 0;
@@ -13,13 +17,18 @@ export default class Graph {
 
   // Creates and returns a new graph given the json object
   static serialize(json) {
-    let graph = new Graph();
+    let config = json['config'] || {};
+
+    let graph = new Graph(config);
+
     json['nodes'].forEach(n => {
       graph.addNode(n.id);
     });
+
     json['links'].forEach(l => {
       graph.addEdge(l.source, l.target);
     });
+
     return graph;
   }
 
@@ -27,12 +36,14 @@ export default class Graph {
     let json = {};
     json.nodes = [];
     json.links = [];
-    Object.keys(this._nodes).forEach(n => {
-      Object.keys(this._nodes[n].out).forEach(l => {
+
+    this.getNodes().forEach(n => {
+      this.nodesConnectedTo(n).forEach(l => {
         json.links.push({"source": n,"target":l});
       });
       json.nodes.push({"id": n});
     });
+
     return json;
   }
 
@@ -54,7 +65,7 @@ export default class Graph {
     return Object.keys(this._nodes);
   }
 
-  // Returns an array of all nodes that have an edge from node.
+  // Returns an array of all nodes that have an edge from outgoing from node.
   nodesConnectedTo(node) {
     if(!this.hasNode(node))
       return;
@@ -70,12 +81,14 @@ export default class Graph {
   // Removes the node from the graph if it exists
   // Will also remove all edges connected to the node
   removeNode(node) {
-    if(!(node in this._nodes)) 
+    if(!this.hasNode(node)) 
       return;
+
     this.nodesConnectedFrom(node)
       .forEach(u => {
         this.removeEdge(u, node);
     });
+
     this.nodesConnectedTo(node)
       .forEach(v => {
         this.removeEdge(node, v);
@@ -86,14 +99,17 @@ export default class Graph {
   // If the graph is directed, then the edge will go from node u to node v
   // If the graph is undirected, the edge will both go from u and v to v and u
   // If the graph is weighted, the weight of the edge will be updated if the edge already exists
-  // Throws error if either u or v is not a node
+  // Does nothing if either u or v is not a node
   addEdge(u, v, weight = 1) {
-    if(!(u in this._nodes && v in this._nodes))
-      throw new Error("Can't add edge when one or more nodes don't exist");
-    if(!this._config.isWeighted)
+    if(!(this.hasNode(u) && this.hasNode(v)))
+      return;
+
+    if(!this.isWeighted)
       weight = 1;
+
     if(!this.hasEdge(u,v))
       this._edgeSize++;
+
     if(this.isDirected) {
       this._nodes[u].out[v] = weight;
       this._nodes[v].in[u] = weight;
@@ -107,7 +123,7 @@ export default class Graph {
 
   // Returns whether or not an edge exists between node u and v
   hasEdge(u, v) {
-    if(!(u in this._nodes && v in this._nodes))
+    if(!(this.hasNode(u) && this.hasNode(v)))
       return false;
     if(v in this._nodes[u].out && u in this._nodes[v].in)
       return true;
@@ -146,8 +162,10 @@ export default class Graph {
   DFS(u) {
     if(!this.hasNode(u)) 
       return {};
+
     let discovery = {};
     let visited = {};
+
     let dfs = (o, v) => {
       if(!(this.hasNode(v)))
         return;
@@ -155,13 +173,15 @@ export default class Graph {
         return;
       visited[v] = true;
       discovery[v] = o;
-      Object.keys(this._nodes[v].out).forEach(e => {
+      this.nodesConnectedTo(v).forEach(e => {
           dfs(v, e);
       });
     };
-    Object.keys(this._nodes[u].out).forEach(e => {
+
+    this.nodesConnectedTo(u).forEach(e => {
       dfs(u, e);
     });
+
     return discovery;
   }
 

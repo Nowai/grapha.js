@@ -69,6 +69,36 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
         expect(Object.keys(l.nodes).length).to.be.equal(0);
       });
     });
+
+    it('should instantiate with the right default configuration', () => {
+      let g = new Graph();
+      expect(g.isDirected).to.equal(true);
+      expect(g.isWeighted).to.equal(false);
+    });
+
+    it('should instantiate with isDirected set in configuration', () => {
+      let g = new Graph({isDirected: false});
+      expect(g.isDirected).to.equal(false);
+    });
+  });
+  describe('config', () => {
+    it('should properly read the configuration file', () => {
+      expect(lib[0]._config.isDirected).to.equal(false);
+      expect(lib[0].isDirected).to.equal(false);
+      expect(lib[2].isDirected).to.equal(false);
+      expect(lib[1].isDirected).to.equal(true);
+      expect(lib[3].isDirected).to.equal(true);
+      expect(lib[4].isDirected).to.equal(true);
+    });
+    it('should read isDirected', () => {
+      let g = new Graph({'isDirected': false});
+      g.addNode('A');
+      g.addNode('B');
+      g.addEdge('A','B');
+      expect(g.hasEdge('A','B')).to.equal(true);
+      expect(g.hasEdge('B','A')).to.equal(true);
+      expect(g.isDirected).to.equal(false);
+    });
   });
   describe('addNode', () => {
     it('should have nodeSize 1 after one addNode call', () => {
@@ -107,13 +137,6 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
     });
   });
   describe('addEdge', () => {
-    it('should throw error if either of the nodes don\'t exist', () => {
-      lib.forEach(l => {
-        expect(() => l.addEdge('A', 'E') ).to.throw();
-        expect(() => l.addEdge('test', 'A') ).to.throw();
-        expect(() => l.addEdge('bar', 'foo') ).to.throw();
-      });
-    });
     it('should add an Edge if both nodes exist', () => {
       lib.forEach(l => {
         if(l.isWeighted)
@@ -260,6 +283,29 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
       expect(g.hasEdge('F','E')).to.equal(false);
       expect(g.hasEdge('D','A')).to.equal(false);
     });
+
+    it('should properly read configuration from json', () => {
+      let json = {
+        'config': {
+          'isWeighted': true,
+          'isDirected': false
+        },
+        'nodes': [
+          {'id': 'A'},
+          {'id': 'B'},
+        ],
+        'links': [
+          {'source': 'A', 'target': 'B'}
+        ]
+      };
+      let graph = Graph.serialize(json);
+      expect(graph.hasNode('A')).to.equal(true);
+      expect(graph.hasNode('B')).to.equal(true);
+      expect(graph.hasEdge('A', 'B')).to.equal(true);
+      expect(graph.hasEdge('B', 'A')).to.equal(true);
+      expect(graph.isDirected).to.equal(false);
+      expect(graph.isWeighted).to.equal(true);
+    })
   });
   describe('deserialize', () => {
       let g = Graph.serialize(json);
