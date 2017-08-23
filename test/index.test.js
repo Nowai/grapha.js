@@ -6,54 +6,11 @@ chai.expect();
 const expect = chai.expect;
 
 let lib = [];
-const json = {
-  "nodes": [
-    {"id": 'A'},
-    {"id": 'B'},
-    {"id": 'C'},
-    {"id": 'D'},
-    {"id": 'E'},
-    {"id": 'F'}
-  ],
-  "links": [
-    {"source": 'A', "target": 'B'},
-    {"source": 'B', "target": 'C'},
-    {"source": 'C', "target": 'D'},
-    {"source": 'D', "target": 'E'},
-    {"source": 'E', "target": 'F'},
-    {"source": 'A', "target": 'F'},
-  ]
-};
-const dfsJson = {
-    "nodes": [
-        {"id": 1},
-        {"id": 2},
-        {"id": 3},
-        {"id": 4},
-        {"id": 5},
-        {"id": 6},
-        {"id": 7},
-        {"id": 8},
-        {"id": 9},
-        {"id": 10},
-        {"id": 11},
-        {"id": 12},
-    ],
-    "links": [
-        {"source": 1, "target": 2 },
-        {"source": 1, "target": 7 },
-        {"source": 1, "target": 8 },
-        {"source": 2, "target": 6 },
-        {"source": 2, "target": 3 },
-        {"source": 3, "target": 5 },
-        {"source": 3, "target": 4 },
-        {"source": 8, "target": 12 },
-        {"source": 8, "target": 9 },
-        {"source": 9, "target": 10 },
-        {"source": 9, "target": 11 },
-    ]
-};
+// test data
+import {json , dfsJson} from './data.test.js';
+
 describe('graphy.js - ES6 Graph library - tests:', () => {
+
   before(() => {
     lib[0] = new Graph({isDirected: false, isWeighted: false});
     lib[1] = new Graph({isDirected: true, isWeighted: false});
@@ -61,9 +18,14 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
     lib[3] = new Graph({isDirected: true, isWeighted: true});
     lib[4] = new Graph();
   });
+
+  // tests most things regarding instantiation
   describe('Instantiation', () => {
+
     it('should create a new graph with edgeSize and nodeSize zero and should contain no node and no edge', () => {
+      // we check every instance of our test graphs
       lib.forEach( l => {
+        // checks initial values that should be set by the constructor
         expect(l.nodeSize).to.be.equal(0);
         expect(l.edgeSize).to.be.equal(0);
         expect(Object.keys(l.nodes).length).to.be.equal(0);
@@ -71,18 +33,25 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
     });
 
     it('should instantiate with the right default configuration', () => {
+      // the default configuration is a directed unweighted graph
       let g = new Graph();
       expect(g.isDirected).to.equal(true);
       expect(g.isWeighted).to.equal(false);
     });
 
     it('should instantiate with isDirected set in configuration', () => {
+      // tests partial configuration 
       let g = new Graph({isDirected: false});
       expect(g.isDirected).to.equal(false);
     });
+
   });
+
+  // after basic instantiation, the configuration parsing is tested
   describe('config', () => {
     it('should properly read the configuration file', () => {
+      // we instantiated our test graphs with different configuration settings
+      // here we check if the configuration settings where properly parsed and set
       expect(lib[0]._config.isDirected).to.equal(false);
       expect(lib[0].isDirected).to.equal(false);
       expect(lib[2].isDirected).to.equal(false);
@@ -90,25 +59,34 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
       expect(lib[3].isDirected).to.equal(true);
       expect(lib[4].isDirected).to.equal(true);
     });
-    it('should read isDirected', () => {
+
+    it('should read isDirected and set edges properly', () => {
+      // tests whether instantiation with a specific configuration has the proper results
       let g = new Graph({'isDirected': false});
       g.addNode('A');
       g.addNode('B');
       g.addEdge('A','B');
       expect(g.hasEdge('A','B')).to.equal(true);
       expect(g.hasEdge('B','A')).to.equal(true);
+      // if the graph is undirected, the edge will go A->B and B->A
       expect(g.isDirected).to.equal(false);
     });
   });
+
+  // testing whether addNode properly adds nodes to the graph
   describe('addNode', () => {
+
     it('should have nodeSize 1 after one addNode call', () => {
       lib.forEach(l => {
         expect(l).to.exist;
         l.addNode('A');
         expect(l.nodeSize).to.be.equal(1);
         expect(Object.keys(l.nodes).length).to.be.equal(1);
+        expect(l.hasNode('A')).to.equal(true);
+        expect(l.hasNode('B')).to.equal(false);
       });
     });
+
     it('should have nodeSize 4 after three more calls', () => {
       lib.forEach(l => {
         l.addNode('B');
@@ -117,7 +95,8 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
         expect(l.nodeSize).to.be.equal(4);
         expect(Object.keys(l.nodes).length).to.be.equal(4);
       });
-    }),
+    });
+
     it('should have nodeSize 4 after inserting an already existing node', () => {
       lib.forEach(l => {
         l.addNode('D');
@@ -126,6 +105,7 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
       });
     });
   });
+
   describe('hasNode', () => {
     let graph = new Graph();
     graph.addNode('A');
@@ -136,6 +116,7 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
       expect(graph.hasNode('C')).to.equal(false);
     });
   });
+
   describe('addEdge', () => {
     it('should add an Edge if both nodes exist', () => {
       lib.forEach(l => {
@@ -158,6 +139,7 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
           });
           expect(Object.keys(l.nodes['A'].out).length).to.equal(1);
       });
+
       // and node.in should only be set by B
       lib
         .filter(l => l.isDirected)
@@ -170,8 +152,11 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
           });
           expect(Object.keys(l.nodes['B'].in).length).to.equal(1);
       });
+
     });
+
     it('should add out and in to A and B with undirected graphs', () => {
+
       lib
         .filter(l => !l.isDirected)
         .forEach(l => {
@@ -183,6 +168,7 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
               expect(Object.keys(n.out).length).to.equal(1);
             })
         });
+
       lib
         .filter(l => !l.isDirected)
         .forEach(l => {
@@ -194,9 +180,12 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
               expect(Object.keys(n.out).length).to.equal(0);
             });
         });
+
     });
   });
+
   describe('hasEdge', () => {
+
     it('should return the edge weight with weighted graphs', () =>{
       lib
         .filter(l => l.isWeighted)
@@ -204,6 +193,7 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
           expect(l.getWeight('A','B')).to.equal(5);
         });
     });
+
     it('should return true if the edge exists with unweighted graphs', () => {
       lib
         .filter(l => !l.isWeighted)
@@ -211,7 +201,9 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
           expect(l.hasEdge('A','B')).to.equal(true);
         });
     });
+
     it('should return false for every call to hasEdge if the edge doesn\'t exist', () => {
+
       lib
         .forEach(l => {
           Object.keys(l.nodes).forEach(u => {
@@ -221,16 +213,19 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
               }
             });
           })
-        })
+        });
     });
+
     it('should return false for non existing nodes', () => {
       lib.forEach(l => {
         expect(l.hasEdge('A', 'foo')).to.equal(false);
         expect(l.hasEdge('bar', 'foo')).to.equal(false);
         expect(l.hasEdge('1234', 'A')).to.equal(false);
-      })
-    })
+      });
+    });
+
   });
+
   describe('removeEdge', () => {
     it('should remove only the specified edge', () => {
       lib.forEach(l => {
@@ -251,12 +246,25 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
       });
     });
   });
-  describe('removeNode', () => {
 
+  describe('removeNode', () => {
+    it('should properly remove the node and every edge involving the node', () => {
+      lib.forEach(l => {
+        expect(l.hasNode('A')).to.equal(true);
+        l.removeNode('A');
+        expect(l.hasNode('A')).to.equal(false);
+        l.getNodes().forEach(n => {
+          l.nodesConnectedTo(n).forEach(o => {
+            expect(o).to.not.equal('A');
+          })
+        });
+      });
+    });
   });
-  describe('serialize', () => {
+
+  describe('deserialize', () => {
     it('should properly instatiate graph based on json structure', () => {
-      let g = Graph.serialize(json);
+      let g = Graph.deserialize(json);
       expect(g.isDirected).to.equal(true);
       expect(g.isWeighted).to.equal(false);
       // check all nodes
@@ -298,7 +306,7 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
           {'source': 'A', 'target': 'B'}
         ]
       };
-      let graph = Graph.serialize(json);
+      let graph = Graph.deserialize(json);
       expect(graph.hasNode('A')).to.equal(true);
       expect(graph.hasNode('B')).to.equal(true);
       expect(graph.hasEdge('A', 'B')).to.equal(true);
@@ -307,10 +315,11 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
       expect(graph.isWeighted).to.equal(true);
     })
   });
+
   describe('deserialize', () => {
-      let g = Graph.serialize(json);
-      const jsonDeserialized = g.deserialize();
-      let gDeserialized = Graph.serialize(jsonDeserialized);
+      let g = Graph.deserialize(json);
+      const jsonDeserialized = g.serialize();
+      let gDeserialized = Graph.deserialize(jsonDeserialized);
       // check if all is the same
       expect(gDeserialized.isDirected).to.equal(true);
       expect(gDeserialized.isWeighted).to.equal(false);
@@ -338,9 +347,10 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
       expect(gDeserialized.hasEdge('F','E')).to.equal(false);
       expect(gDeserialized.hasEdge('D','A')).to.equal(false);
   });
+
   describe('DFS', () => {
     it('should discover nodes in the right order', () => {
-      let g = Graph.serialize(dfsJson);
+      let g = Graph.deserialize(dfsJson);
       const dfs = g.DFS('1');
       let c = 2;
       Object.keys(dfs).forEach(n => {

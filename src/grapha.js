@@ -16,7 +16,7 @@ export default class Graph {
   }
 
   // Creates and returns a new graph given the json object
-  static serialize(json) {
+  static deserialize(json) {
     let config = json['config'] || {};
 
     let graph = new Graph(config);
@@ -32,7 +32,7 @@ export default class Graph {
     return graph;
   }
 
-  deserialize() {
+  serialize() {
     let json = {};
     json.nodes = [];
     json.links = [];
@@ -93,6 +93,8 @@ export default class Graph {
       .forEach(v => {
         this.removeEdge(node, v);
     });
+
+    delete this._nodes[node];
   }
 
   // Adds an edge between node u and v

@@ -1,6 +1,6 @@
 {
   "name": "grapha",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "grapha.js - A javascript es6 graph library",
   "main": "lib/grapha.min.js",
   "scripts": {
