@@ -36,11 +36,35 @@ export default class Graph {
     return json;
   }
 
+  hasNode(node) {
+    if(node in this._nodes)
+      return true;
+    return false;
+  }
+
   // Adds a node to the Graph if it is not already in it
   addNode(node) {
-    if(!(node in this._nodes))
+    if(!this.hasNode(node))
       this._nodeSize++;
     this._nodes[node] = this.nodeOrEmpty(node);
+  }
+
+  // Returns an array of all nodes
+  getNodes() {
+    return Object.keys(this._nodes);
+  }
+
+  // Returns an array of all nodes that have an edge from node.
+  nodesConnectedTo(node) {
+    if(!this.hasNode(node))
+      return;
+    return Object.keys(this._nodes[node].out);
+  }
+
+  nodesConnectedFrom(node) {
+    if(!this.hasNode(node))
+      return;
+    return Object.keys(this._nodes[node].in);
   }
 
   // Removes the node from the graph if it exists
@@ -48,20 +72,14 @@ export default class Graph {
   removeNode(node) {
     if(!(node in this._nodes)) 
       return;
-    Object.keys(this._nodes[node].in)
+    this.nodesConnectedFrom(node)
       .forEach(u => {
         this.removeEdge(u, node);
     });
-    Object.keys(this._nodes[node].out)
+    this.nodesConnectedTo(node)
       .forEach(v => {
         this.removeEdge(node, v);
     });
-  }
-
-  hasNode(node) {
-    if(node in this._nodes)
-      return true;
-    return false;
   }
 
   // Adds an edge between node u and v

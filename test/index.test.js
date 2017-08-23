@@ -96,6 +96,16 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
       });
     });
   });
+  describe('hasNode', () => {
+    let graph = new Graph();
+    graph.addNode('A');
+    graph.addNode('B');
+    it('should only return true if the given node exists in the graph', () => {
+      expect(graph.hasNode('A')).to.equal(true);
+      expect(graph.hasNode('B')).to.equal(true);
+      expect(graph.hasNode('C')).to.equal(false);
+    });
+  });
   describe('addEdge', () => {
     it('should throw error if either of the nodes don\'t exist', () => {
       lib.forEach(l => {
