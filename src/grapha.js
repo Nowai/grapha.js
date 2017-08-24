@@ -26,7 +26,10 @@ export default class Graph {
     });
 
     json['links'].forEach(l => {
-      graph.addEdge(l.source, l.target);
+      if('weight' in l) 
+        graph.addEdge(l.source, l.target, Number(l.weight));
+      else
+        graph.addEdge(l.source, l.target);
     });
 
     return graph;
@@ -36,10 +39,17 @@ export default class Graph {
     let json = {};
     json.nodes = [];
     json.links = [];
+    json.config = {};
+
+    json.config.isWeighted = this.isWeighted;
+    json.config.isDirected = this.isDirected;
 
     this.getNodes().forEach(n => {
       this.nodesConnectedTo(n).forEach(l => {
-        json.links.push({"source": n,"target":l});
+        if(!this.isWeighted)
+          json.links.push({"source": n,"target":l});
+        else 
+          json.links.push({"source": n,"target":l, "weight": this.getWeight(n,l)});
       });
       json.nodes.push({"id": n});
     });

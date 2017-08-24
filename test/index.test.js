@@ -184,6 +184,27 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
     });
   });
 
+  describe('getWeight', () => {
+    it('should properly return the right edge weight', () => {
+      let graphWeight = new Graph({'isWeighted': true});
+      graphWeight.addNode('A');
+      graphWeight.addNode('B');
+      graphWeight.addNode('C');
+      graphWeight.addEdge('A', 'B', 3);
+      graphWeight.addEdge('A', 'C', 5);
+
+      expect(graphWeight.hasNode('A')).to.equal(true);
+      expect(graphWeight.hasNode('B')).to.equal(true);
+      expect(graphWeight.hasNode('C')).to.equal(true);
+
+      expect(graphWeight.hasEdge('A', 'B')).to.equal(true);
+      expect(graphWeight.hasEdge('A', 'C')).to.equal(true);
+
+      expect(graphWeight.getWeight('A', 'B')).to.equal(3);
+      expect(graphWeight.getWeight('A', 'C')).to.equal(5);
+    });
+  });
+
   describe('hasEdge', () => {
 
     it('should return the edge weight with weighted graphs', () =>{
@@ -300,7 +321,7 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
         },
         'nodes': [
           {'id': 'A'},
-          {'id': 'B'},
+          {'id': 'B'}
         ],
         'links': [
           {'source': 'A', 'target': 'B'}
@@ -313,39 +334,67 @@ describe('graphy.js - ES6 Graph library - tests:', () => {
       expect(graph.hasEdge('B', 'A')).to.equal(true);
       expect(graph.isDirected).to.equal(false);
       expect(graph.isWeighted).to.equal(true);
-    })
+    });
+
+    it('should parse the weight', () => {
+      let json2 = {
+        'config': {
+          'isWeighted': true,
+          'isDirected': true 
+        },
+        'nodes': [
+          {'id': 'A'},
+          {'id': 'B'},
+          {'id': 'C'}
+        ],
+        'links': [
+          {'source': 'A', 'target': 'B', 'weight': 5},
+          {'source': 'A', 'target': 'C', 'weight': 3},
+        ]
+      };
+      let graph2 = Graph.deserialize(json2);
+      expect(graph2.hasNode('A')).to.equal(true);
+      expect(graph2.hasNode('B')).to.equal(true);
+      expect(graph2.hasNode('C')).to.equal(true);
+      expect(graph2.hasEdge('A','B')).to.equal(true);
+      expect(graph2.hasEdge('A','C')).to.equal(true);
+      expect(graph2.getWeight('A', 'B')).to.equal(5);
+      expect(graph2.getWeight('A', 'C')).to.equal(3);
+    });
   });
 
   describe('deserialize', () => {
-      let g = Graph.deserialize(json);
-      const jsonDeserialized = g.serialize();
-      let gDeserialized = Graph.deserialize(jsonDeserialized);
-      // check if all is the same
-      expect(gDeserialized.isDirected).to.equal(true);
-      expect(gDeserialized.isWeighted).to.equal(false);
-      // check all nodes
-      expect(gDeserialized.hasNode('A')).to.equal(true); 
-      expect(gDeserialized.hasNode('B')).to.equal(true); 
-      expect(gDeserialized.hasNode('C')).to.equal(true); 
-      expect(gDeserialized.hasNode('D')).to.equal(true); 
-      expect(gDeserialized.hasNode('E')).to.equal(true); 
-      expect(gDeserialized.hasNode('F')).to.equal(true); 
-      // check all edges
-      expect(gDeserialized.hasEdge('A','B')).to.equal(true);
-      expect(gDeserialized.hasEdge('B','C')).to.equal(true);
-      expect(gDeserialized.hasEdge('C','D')).to.equal(true);
-      expect(gDeserialized.hasEdge('D','E')).to.equal(true);
-      expect(gDeserialized.hasEdge('E','F')).to.equal(true);
-      expect(gDeserialized.hasEdge('A','F')).to.equal(true);
-      // check not exististing stuff
-      expect(gDeserialized.hasNode('foo')).to.equal(false); 
-      expect(gDeserialized.hasNode('bar')).to.equal(false); 
-      expect(gDeserialized.hasNode('1234')).to.equal(false); 
-      expect(gDeserialized.hasNode('a')).to.equal(false); 
-      expect(gDeserialized.hasEdge('foo','B')).to.equal(false);
-      expect(gDeserialized.hasEdge('A','1234')).to.equal(false);
-      expect(gDeserialized.hasEdge('F','E')).to.equal(false);
-      expect(gDeserialized.hasEdge('D','A')).to.equal(false);
+      it('should parse the same', () => {
+        let g = Graph.deserialize(json);
+        const jsonDeserialized = g.serialize();
+        let gDeserialized = Graph.deserialize(jsonDeserialized);
+        // check if all is the same
+        expect(gDeserialized.isDirected).to.equal(true);
+        expect(gDeserialized.isWeighted).to.equal(false);
+        // check all nodes
+        expect(gDeserialized.hasNode('A')).to.equal(true); 
+        expect(gDeserialized.hasNode('B')).to.equal(true); 
+        expect(gDeserialized.hasNode('C')).to.equal(true); 
+        expect(gDeserialized.hasNode('D')).to.equal(true); 
+        expect(gDeserialized.hasNode('E')).to.equal(true); 
+        expect(gDeserialized.hasNode('F')).to.equal(true); 
+        // check all edges
+        expect(gDeserialized.hasEdge('A','B')).to.equal(true);
+        expect(gDeserialized.hasEdge('B','C')).to.equal(true);
+        expect(gDeserialized.hasEdge('C','D')).to.equal(true);
+        expect(gDeserialized.hasEdge('D','E')).to.equal(true);
+        expect(gDeserialized.hasEdge('E','F')).to.equal(true);
+        expect(gDeserialized.hasEdge('A','F')).to.equal(true);
+        // check not exististing stuff
+        expect(gDeserialized.hasNode('foo')).to.equal(false); 
+        expect(gDeserialized.hasNode('bar')).to.equal(false); 
+        expect(gDeserialized.hasNode('1234')).to.equal(false); 
+        expect(gDeserialized.hasNode('a')).to.equal(false); 
+        expect(gDeserialized.hasEdge('foo','B')).to.equal(false);
+        expect(gDeserialized.hasEdge('A','1234')).to.equal(false);
+        expect(gDeserialized.hasEdge('F','E')).to.equal(false);
+        expect(gDeserialized.hasEdge('D','A')).to.equal(false);
+      });
   });
 
   describe('DFS', () => {
